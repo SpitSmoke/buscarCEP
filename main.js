@@ -27,38 +27,62 @@
 //     });
 // });
 
-$(document).ready(function(){
+// Requisição AJAX
+        // $.ajax(endpoint).done(function(data){
+        //     const logradouro = data.logradouro;
+        //     const bairro = data.bairro;
+        //     const cidade = data.localidade;
+        //     const uf = data.uf;
+
+
+        //     const endereco = `${logradouro}, ${bairro} - ${cidade} - ${uf}`;
+
+        //     $('#endereco').val(endereco);
+
+        //     setTimeout(function(){
+        //         $(botao).find('i').removeClass('d-none');
+        //         $(botao).find('span').addClass('d-none');
+        //     }, 2000);
+
+        // }).fail(function(){
+        //     alert('Erro ao buscar o CEP. Verifique se ele é válido.');
+        //     // Certifique-se de esconder o spinner em caso de erro também
+        //     $(botao).find('i').removeClass('d-none');
+        //     $(botao).find('span').addClass('d-none');
+        // });
+// -----------------------------------------------------------------------------------------------------------------------
+
+$(document).ready(function() {
     $('#cep').mask('00000-000');
 
-    $('#btn-buscar-cep').on('click', function(){
+    $('#btn-buscar-cep').on('click', function() {
         const cep = $('#cep').val();
         const endpoint = `https://viacep.com.br/ws/${cep}/json/`;
         const botao = $(this);
         $(botao).find('i').addClass('d-none');
         $(botao).find('span').removeClass('d-none');
 
-        // Requisição AJAX
-        $.ajax(endpoint).done(function(data){
-            const logradouro = data.logradouro;
-            const bairro = data.bairro;
-            const cidade = data.localidade;
-            const uf = data.uf;
+        fetch(endpoint)
+            .then(function(respostas) {
+                return respostas.json();
+            })
+            .then(function(json) {
+                const logradouro = json.logradouro;
+                const bairro = json.bairro;
+                const cidade = json.localidade;
+                const uf = json.uf;
+                const endereco = `${logradouro}, ${bairro} - ${cidade} - ${uf}`;
+                $('#endereco').val(endereco);
 
-
-            const endereco = `${logradouro}, ${bairro} - ${cidade} - ${uf}`;
-
-            $('#endereco').val(endereco);
-
-            setTimeout(function(){
+                setTimeout(function() {
+                    $(botao).find('i').removeClass('d-none');
+                    $(botao).find('span').addClass('d-none');
+                }, 2000);
+            }).catch(function(erro){
+                alert('Erro ao buscar o CEP. Verifique se ele é válido.');
                 $(botao).find('i').removeClass('d-none');
                 $(botao).find('span').addClass('d-none');
-            }, 2000);
-
-        }).fail(function(){
-            alert('Erro ao buscar o CEP. Verifique se ele é válido.');
-            // Certifique-se de esconder o spinner em caso de erro também
-            $(botao).find('i').removeClass('d-none');
-            $(botao).find('span').addClass('d-none');
-        });
+            });
+            
     });
 });
